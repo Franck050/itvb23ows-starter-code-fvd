@@ -6,18 +6,11 @@ function isNeighbour($a, $b) {
     $a = explode(',', $a);
     $b = explode(',', $b);
 
-    $isNeighbour = false;
-
-    if ($a[0] == $b[0] && abs($a[1] - $b[1]) == 1) {
-        $isNeighbour = true;
-    } elseif ($a[1] == $b[1] && abs($a[0] - $b[0]) == 1) {
-        $isNeighbour = true;
-    } elseif ($a[0] + $a[1] == $b[0] + $b[1]) {
-        $isNeighbour = true;
-    }
-
-    return $isNeighbour;
+    return ($a[0] == $b[0] && abs($a[1] - $b[1]) == 1) ||
+           ($a[1] == $b[1] && abs($a[0] - $b[0]) == 1) ||
+           ($a[0] + $a[1] == $b[0] + $b[1]);
 }
+
 
 
 function hasNeighBour($a, $board) {
@@ -61,7 +54,10 @@ function slide($board, $from, $to) {
         if (!$board[$common[0]] && !$board[$common[1]] && !$board[$from] && !$board[$to]) {
             $result = false;
         } else {
-            $result = min(len($board[$common[0]]), len($board[$common[1]])) <= max(len($board[$from]), len($board[$to]));
+            $minLength = min(len($board[$common[0]]), len($board[$common[1]]));
+            $maxLength = max(len($board[$from]), len($board[$to]));
+
+            $result = $minLength <= $maxLength;
         }
     }
 
