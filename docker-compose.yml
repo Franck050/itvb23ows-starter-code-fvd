@@ -2,14 +2,14 @@ version: '3.0'
 
 services:
   web:
-    build: ./PhpWebApp
+    build: src/PhpWebApp
     ports:
       - "80:80"
     depends_on:
       - db
 
   db:
-    build: ./Database
+    build: src/Database
     ports:
       - "3306:3306"
     environment:
