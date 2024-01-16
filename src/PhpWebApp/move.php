@@ -2,6 +2,7 @@
 
 session_start();
 
+include_once 'database.php';
 include_once 'util.php';
 
 $from = $_POST['from'];
@@ -66,15 +67,16 @@ if (!isset($board[$from])) {
             $board[$to] = [$tile];
         }
         $_SESSION['player'] = 1 - $_SESSION['player'];
-        $db = include 'database.php';
+        $db = Database::getInstance();
         $stmt = $db->prepare(
             'insert into moves ' .
             '(game_id, type, move_from, move_to, previous_id, state) ' .
             'values (?, "move", ?, ?, ?, ?)'
         );
-        $stmt->bind_param('issis', $_SESSION['game_id'], $from, $to, $_SESSION['last_move'], getState());
+        $state = $db->getState();
+        $stmt->bind_param('issis', $_SESSION['game_id'], $from, $to, $_SESSION['last_move'], $state);
         $stmt->execute();
-        $_SESSION['last_move'] = $db->insert_id;
+        $_SESSION['last_move'] = $db->getConnection()->insert_id;
     }
     $_SESSION['board'] = $board;
 }

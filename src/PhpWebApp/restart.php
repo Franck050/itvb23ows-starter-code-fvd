@@ -2,6 +2,8 @@
 
 session_start();
 
+include_once 'database.php';
+
 $_SESSION['board'] = [];
 $_SESSION['hand'] = [
     0 => [
@@ -21,8 +23,8 @@ $_SESSION['hand'] = [
 ];
 $_SESSION['player'] = 0;
 
-$db = include_once 'database.php';
+$db = Database::getInstance();
 $db->prepare('INSERT INTO games VALUES ()')->execute();
-$_SESSION['game_id'] = $db->insert_id;
+$_SESSION['game_id'] = $db->getConnection()->insert_id;
 
 header('Location: index.php');

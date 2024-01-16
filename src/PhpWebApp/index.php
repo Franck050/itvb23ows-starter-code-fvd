@@ -1,27 +1,31 @@
 <?php
-    session_start();
 
-    include_once 'util.php';
+session_start();
 
-    if (!isset($_SESSION['board'])) {
-        header('Location: restart.php');
-        exit(0);
-    }
-    $board = $_SESSION['board'];
-    $player = $_SESSION['player'];
-    $hand = $_SESSION['hand'];
+include_once 'util.php';
+include_once 'database.php';
 
-    $to = [];
-    foreach ($GLOBALS['OFFSETS'] as $pq) {
-        foreach (array_keys($board) as $pos) {
-            $pq2 = explode(',', $pos);
-            $to[] = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
-        }
+//use Itvb23owsStarterCodeFvd\PhpWebApp\Database as Database;
+
+if (!isset($_SESSION['board'])) {
+    header('Location: restart.php');
+    exit(0);
+}
+$board = $_SESSION['board'];
+$player = $_SESSION['player'];
+$hand = $_SESSION['hand'];
+
+$to = [];
+foreach ($GLOBALS['OFFSETS'] as $pq) {
+    foreach (array_keys($board) as $pos) {
+        $pq2 = explode(',', $pos);
+        $to[] = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
     }
-    $to = array_unique($to);
-    if (!count($to)) {
-        $to[] = '0,0';
-    }
+}
+$to = array_unique($to);
+if (!count($to)) {
+    $to[] = '0,0';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -187,7 +191,7 @@
         </strong>
         <ol>
             <?php
-                $db = include 'database.php';
+                $db = Database::getInstance();
                 $stmt = $db->prepare('SELECT * FROM moves WHERE game_id = '.$_SESSION['game_id']);
                 $stmt->execute();
                 $result = $stmt->get_result();
