@@ -5,8 +5,6 @@ session_start();
 include_once 'util.php';
 include_once 'database.php';
 
-//use Itvb23owsStarterCodeFvd\PhpWebApp\Database as Database;
-
 if (!isset($_SESSION['board'])) {
     header('Location: restart.php');
     exit(0);
@@ -16,16 +14,23 @@ $player = $_SESSION['player'];
 $hand = $_SESSION['hand'];
 
 $to = [];
+$player_tiles = $_SESSION['hand'][$_SESSION['player']];
+
 foreach ($GLOBALS['OFFSETS'] as $pq) {
     foreach (array_keys($board) as $pos) {
         $pq2 = explode(',', $pos);
-        $to[] = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
+        $new_pos = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
+
+        if (isValidPosition($new_pos, $board, $_SESSION['player']) && count($player_tiles) > 0) {
+            $to[] = $new_pos;
+        }
     }
 }
 $to = array_unique($to);
 if (!count($to)) {
     $to[] = '0,0';
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -145,7 +150,9 @@ if (!count($to)) {
             <select name="piece">
                 <?php
                     foreach ($hand[$player] as $tile => $ct) {
-                        echo "<option value=\"$tile\">$tile</option>";
+                        if ($ct > 0) {
+                            echo "<option value=\"$tile\">$tile</option>";
+                        }
                     }
                 ?>
             </select>

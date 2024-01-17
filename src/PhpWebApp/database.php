@@ -1,7 +1,5 @@
 <?php
 
-//namespace Itvb23owsStarterCodeFvd\PhpWebApp;
-
 class Database
 {
     private static $instance = null;

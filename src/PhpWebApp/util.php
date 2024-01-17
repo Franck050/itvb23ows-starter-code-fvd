@@ -2,7 +2,8 @@
 
 $GLOBALS['OFFSETS'] = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
 
-function isNeighbour($a, $b) {
+function isNeighbour($a, $b): bool
+{
     $a = explode(',', $a);
     $b = explode(',', $b);
 
@@ -13,7 +14,8 @@ function isNeighbour($a, $b) {
 
 
 
-function hasNeighBour($a, $board) {
+function hasNeighbour($a, $board) : bool
+{
     foreach (array_keys($board) as $b) {
         if (isNeighbour($a, $b)) {
             return true;
@@ -21,7 +23,8 @@ function hasNeighBour($a, $board) {
     }
 }
 
-function neighboursAreSameColor($player, $a, $board) {
+function neighboursAreSameColor($player, $a, $board): bool
+{
     foreach ($board as $b => $st) {
         if (!$st) {
             continue;
@@ -34,12 +37,14 @@ function neighboursAreSameColor($player, $a, $board) {
     return true;
 }
 
-function len($tile) {
+function len($tile): int
+{
     return $tile ? count($tile) : 0;
 }
 
-function slide($board, $from, $to) {
-    if (!hasNeighBour($to, $board) || !isNeighbour($from, $to)) {
+function slide($board, $from, $to): bool
+{
+    if (!hasNeighbour($to, $board) || !isNeighbour($from, $to)) {
         $result = false;
     } else {
         $b = explode(',', $to);
@@ -62,4 +67,22 @@ function slide($board, $from, $to) {
     }
 
     return $result;
+}
+
+function isValidPosition($position, $board, $player): bool
+{
+    // Check if the position is already occupied
+    if (!empty($board[$position])) {
+        return false;
+    }
+
+    // For the first move, the only valid position is '0,0'
+    if (empty($board)) {
+        return $position === '0,0';
+    }
+
+    // For subsequent moves, check if the position has a neighbor
+    // and, if more than one tile is on the board, ensure neighbors are of the same color
+    return hasNeighbour($position, $board) &&
+        (count($board) === 1 || neighboursAreSameColor($player, $position, $board));
 }
