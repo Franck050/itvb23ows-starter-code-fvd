@@ -146,3 +146,8 @@ function getMoves($board, $player): array
 
     return array_keys($potentialMoves);
 }
+
+function playerMustPlayQueen($piece, $hand): bool
+{
+    return $piece != 'Q' && array_sum($hand) <= 8 && $hand['Q'];
+}
