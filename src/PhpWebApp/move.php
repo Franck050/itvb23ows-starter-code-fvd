@@ -21,6 +21,9 @@ if (!isset($board[$from])) {
     $_SESSION['error'] = "Queen bee is not played";
 } else {
     $tile = array_pop($board[$from]);
+    if (empty($board[$from])) {
+        unset($board[$from]); // Verwijder de oude positie als er geen stenen meer zijn
+    }
     if (!hasNeighbour($to, $board)) {
         $_SESSION['error'] = "Move would split hive";
     } else {
