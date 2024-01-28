@@ -22,6 +22,7 @@ $_SESSION['hand'] = [
     ]
 ];
 $_SESSION['player'] = 0;
+$_SESSION['last_move'] = null;
 
 $db = Database::getInstance();
 $db->prepare('INSERT INTO games VALUES ()')->execute();

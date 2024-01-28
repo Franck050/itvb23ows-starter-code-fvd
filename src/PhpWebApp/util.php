@@ -21,6 +21,19 @@ function hasNeighbour($a, $board) : bool
             return true;
         }
     }
+    return false;
+}
+
+function getNeighbours($tile): array
+{
+    $neighbours = [];
+    list($x, $y) = explode(',', $tile);
+
+    foreach ($GLOBALS['OFFSETS'] as $offset) {
+        $neighbours[] = ($x + $offset[0]) . ',' . ($y + $offset[1]);
+    }
+
+    return $neighbours;
 }
 
 function neighboursAreSameColor($player, $a, $board): bool
@@ -71,18 +84,65 @@ function slide($board, $from, $to): bool
 
 function isValidPosition($position, $board, $player): bool
 {
-    // Check if the position is already occupied
     if (!empty($board[$position])) {
         return false;
     }
 
-    // For the first move, the only valid position is '0,0'
     if (empty($board)) {
         return $position === '0,0';
     }
 
-    // For subsequent moves, check if the position has a neighbor
-    // and, if more than one tile is on the board, ensure neighbors are of the same color
     return hasNeighbour($position, $board) &&
         (count($board) === 1 || neighboursAreSameColor($player, $position, $board));
+}
+
+function setStartingHand() {
+    $_SESSION['hand'] = [
+        0 => [
+            "Q" => 1,
+            "B" => 2,
+            "S" => 2,
+            "A" => 3,
+            "G" => 3
+        ],
+        1 => [
+            "Q" => 1,
+            "B" => 2,
+            "S" => 2,
+            "A" => 3,
+            "G" => 3
+        ]
+    ];
+}
+
+function setPlayer($player) {
+    $_SESSION['player'] = $player;
+}
+
+function getMoves($board, $player): array
+{
+    $boardCount = count($board);
+    if ($boardCount === 0) {
+        return ['0,0'];
+    }
+
+    if ($boardCount === 1) {
+        return ['0,1', '1,0', '-1,0', '0,-1', '1,-1', '-1,1'];
+    }
+
+    $potentialMoves = [];
+
+    foreach ($board as $pos => $tile) {
+        if ($tile[0][0] !== $player) {
+            continue;
+        }
+
+        foreach (getNeighbours($pos) as $neighbour) {
+            if (!isset($board[$neighbour]) && neighboursAreSameColor($player, $neighbour, $board)) {
+                $potentialMoves[$neighbour] = true;
+            }
+        }
+    }
+
+    return array_keys($potentialMoves);
 }
