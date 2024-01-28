@@ -115,10 +115,6 @@ function setStartingHand() {
     ];
 }
 
-function setPlayer($player) {
-    $_SESSION['player'] = $player;
-}
-
 function getMoves($board, $player): array
 {
     $boardCount = count($board);
@@ -150,4 +146,39 @@ function getMoves($board, $player): array
 function playerMustPlayQueen($piece, $hand): bool
 {
     return $piece != 'Q' && array_sum($hand) <= 8 && $hand['Q'];
+}
+
+function isValidGrasshopperMove($from, $to, $board): bool
+{
+    if (!$from || !isset($board[$from])) {
+        return false; // Sprinkhaan moet van een bestaande positie komen.
+    }
+
+    $fromCoords = explode(',', $from);
+    $toCoords = explode(',', $to);
+
+    $dx = $toCoords[0] - $fromCoords[0];
+    $dy = $toCoords[1] - $fromCoords[1];
+
+    if (abs($dx) !== abs($dy) && $dx !== 0 && $dy !== 0) {
+        return false; // Moet in een rechte lijn bewegen.
+    }
+
+    $stepX = $dx ? $dx / abs($dx) : 0;
+    $stepY = $dy ? $dy / abs($dy) : 0;
+    $x = $fromCoords[0] + $stepX;
+    $y = $fromCoords[1] + $stepY;
+
+    $jumpedOverPiece = false;
+
+    while ($x != $toCoords[0] || $y != $toCoords[1]) {
+        if (!isset($board["$x,$y"])) {
+            return false; // Mag niet over lege velden springen.
+        }
+        $jumpedOverPiece = true;
+        $x += $stepX;
+        $y += $stepY;
+    }
+
+    return $jumpedOverPiece && !isset($board["$x,$y"]); // Moet over minimaal één steen springen en mag niet naar een bezet veld springen.
 }

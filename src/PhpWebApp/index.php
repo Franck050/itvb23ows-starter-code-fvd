@@ -4,24 +4,30 @@ session_start();
 
 include_once 'util.php';
 include_once 'database.php';
+include_once 'Game.php';
+include_once 'GameComponents/Hand.php';
+include_once 'GameComponents/Player.php';
+include_once 'GameComponents/Board.php';
 
-if (!isset($_SESSION['board'])) {
-    header('Location: restart.php');
+$board = Board::getBoard();
+
+if (!isset($board)) {
+    Game::restart();
     exit(0);
 }
-$board = $_SESSION['board'];
-$player = $_SESSION['player'];
-$hand = $_SESSION['hand'];
+
+$player = Player::getPlayer();
+$hand = Hand::getHand();
 
 $to = [];
-$player_tiles = $_SESSION['hand'][$_SESSION['player']];
+$player_tiles = $hand[$player];
 
 foreach ($GLOBALS['OFFSETS'] as $pq) {
     foreach (array_keys($board) as $pos) {
         $pq2 = explode(',', $pos);
         $new_pos = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
 
-        if (isValidPosition($new_pos, $board, $_SESSION['player']) && count($player_tiles) > 0) {
+        if (isValidPosition($new_pos, $board, $player) && count($player_tiles) > 0) {
             $to[] = $new_pos;
         }
     }

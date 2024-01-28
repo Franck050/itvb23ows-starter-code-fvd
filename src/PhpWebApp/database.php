@@ -43,4 +43,11 @@ class Database
         $_SESSION['board'] = $b;
         $_SESSION['player'] = $c;
     }
+
+    function newGame()
+    {
+        $stmt = $this->prepare('INSERT INTO games VALUES ()');
+        $stmt->execute();
+        $_SESSION['game_id'] = $this->getConnection()->insert_id;
+    }
 }
