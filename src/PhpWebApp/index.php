@@ -148,11 +148,11 @@ if (!count($to)) {
             </select>
             <input type="submit" value="Move">
         </form>
-        <form method="post" action="pass.php">
-            <input type="submit" value="Pass">
+        <form method="post" action="router.php">
+            <input type="submit" name="action" value="Pass">
         </form>
-        <form method="post" action="restart.php">
-            <input type="submit" value="Restart">
+        <form method="post" action="router.php">
+            <input type="submit" name="action" value="Restart">
         </form>
         <strong>
             <?php
