@@ -106,7 +106,7 @@ if (!count($to)) {
                 echo "Black";
             } ?>
         </div>
-        <form method="post" action="play.php">
+        <form method="post" action="router.php">
             <select name="piece">
                 <?php
                     foreach ($hand[$player] as $tile => $ct) {
@@ -123,7 +123,7 @@ if (!count($to)) {
                     }
                 ?>
             </select>
-            <input type="submit" value="Play">
+            <input type="submit" name="action" value="Play">
         </form>
         <form method="post" action="move.php">
             <select name="from">
