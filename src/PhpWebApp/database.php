@@ -64,14 +64,14 @@ class Database
         return $this->connection->insert_id;
     }
 
-    public function insertMove($gameId, $type, $piece, $to, $lastMove) {
+    public function insertMove($gameId, $type, $from, $to, $lastMove) {
         $stmt = $this->prepare(
             'INSERT INTO moves ' .
             '(game_id, type, move_from, move_to, previous_id, state) ' .
             'VALUES (?, ?, ?, ?, ?, ?)'
         );
         $state = $this->getState();
-        $stmt->bind_param('isssis', $gameId, $type, $piece, $to, $lastMove, $state); // Updated to include $type
+        $stmt->bind_param('isssis', $gameId, $type, $from, $to, $lastMove, $state); // Updated to include $type
         $stmt->execute();
         return $this->connection->insert_id;
     }

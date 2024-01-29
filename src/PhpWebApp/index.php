@@ -20,22 +20,15 @@ $player = Player::getPlayer();
 $hand = Hand::getHand();
 
 $to = [];
-$player_tiles = $hand[$player];
-
-foreach ($GLOBALS['OFFSETS'] as $pq) {
+foreach ($GLOBALS["OFFSETS"] as $pq) {
     foreach (array_keys($board) as $pos) {
         $pq2 = explode(',', $pos);
-        $new_pos = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
-
-        if (isValidPosition($new_pos, $board, $player) && count($player_tiles) > 0) {
-            $to[] = $new_pos;
-        }
+        $to[] = ($pq[0] + $pq2[0]) . ',' . ($pq[1] + $pq2[1]);
     }
 }
 $to = array_unique($to);
-if (!count($to)) {
-    $to[] = '0,0';
-}
+if (!count($to))
+    $to[] = '0,0'
 
 ?>
 <!DOCTYPE html>
@@ -125,7 +118,7 @@ if (!count($to)) {
             </select>
             <input type="submit" name="action" value="Play">
         </form>
-        <form method="post" action="move.php">
+        <form method="post" action="router.php">
             <select name="from">
                 <?php
                     foreach (array_keys($board) as $pos) {
@@ -146,7 +139,7 @@ if (!count($to)) {
                     }
                 ?>
             </select>
-            <input type="submit" value="Move">
+            <input type="submit" name="action" value="Move">
         </form>
         <form method="post" action="router.php">
             <input type="submit" name="action" value="Pass">
