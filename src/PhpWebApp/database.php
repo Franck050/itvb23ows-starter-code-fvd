@@ -75,4 +75,17 @@ class Database
         $stmt->execute();
         return $this->connection->insert_id;
     }
+
+    public function undoLastMove($lastMoveId) {
+        $stmt = $this->prepare('SELECT * FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $lastMoveId);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_array();
+
+        if (!$result) {
+            return false;
+        }
+        $this->setState($result[6]);
+        return $result[5];
+    }
 }

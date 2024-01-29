@@ -173,8 +173,8 @@ if (!count($to)) {
                 }
             ?>
         </ol>
-        <form method="post" action="undo.php">
-            <input type="submit" value="Undo">
+        <form method="post" action="router.php">
+            <input type="submit" name="action" value="Undo">
         </form>
     </body>
 </html>

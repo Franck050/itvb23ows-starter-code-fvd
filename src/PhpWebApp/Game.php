@@ -93,4 +93,19 @@ class Game
         $newMoveId = $db->insertMove(self::getGameId(), 'play', $piece, $to, self::getLastMove());
         self::setLastMove($newMoveId);
     }
+
+    public static function undo()
+    {
+        $db = Database::getInstance();
+        if (!isset($_SESSION['last_move']) || $_SESSION['last_move'] == null) {
+            header('Location: index.php');
+            exit(0);
+        }
+        $previousMoveId = $db->undoLastMove($_SESSION['last_move']);
+        if ($previousMoveId === false) {
+            $_SESSION['error'] = 'Undo failed. Invalid move or database error';
+            return;
+        }
+        $_SESSION['last_move'] = $previousMoveId;
+    }
 }
