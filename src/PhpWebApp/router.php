@@ -16,5 +16,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'Pass') {
     header('Location: index.php');
     exit;
 }
+if (isset($_POST['action']) && $_POST['action'] === 'Play') {
+    Game::play($_POST['piece'], $_POST['to']);
+
+    header('Location: index.php');
+    exit;
+}
 
 echo 'FOUT';

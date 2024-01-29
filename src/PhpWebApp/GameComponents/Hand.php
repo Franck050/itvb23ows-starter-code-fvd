@@ -43,4 +43,15 @@ class Hand
             ]
         ];
     }
+
+    public static function updateHand($player, $piece) {
+        if (!isset($_SESSION['hand'][$player][$piece])) {
+            return;
+        }
+
+        if ($_SESSION['hand'][$player][$piece] <= 0) {
+            return;
+        }
+        $_SESSION['hand'][$player][$piece]--;
+    }
 }

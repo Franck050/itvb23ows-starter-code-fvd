@@ -19,4 +19,11 @@ class Board
     {
         $_SESSION['board'] = $board;
     }
+
+    public static function setPiece($to, $piece) {
+        if (!isset($_SESSION['board'])) {
+            $_SESSION['board'] = [];
+        }
+        $_SESSION['board'][$to] = [[$_SESSION['player'], $piece]];
+    }
 }

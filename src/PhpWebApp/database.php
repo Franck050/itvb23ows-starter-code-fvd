@@ -50,4 +50,29 @@ class Database
         $stmt->execute();
         $_SESSION['game_id'] = $this->getConnection()->insert_id;
     }
+
+    function insertPassMove($gameId, $previousId)
+    {
+        $stmt = $this->prepare(
+            'INSERT INTO moves ' .
+            '(game_id, type, move_from, move_to, previous_id, state) ' .
+            'VALUES (?, "pass", NULL, NULL, ?, ?)'
+        );
+        $state = $this->getState();
+        $stmt->bind_param('iis', $gameId, $previousId, $state);
+        $stmt->execute();
+        return $this->connection->insert_id;
+    }
+
+    public function insertMove($gameId, $type, $piece, $to, $lastMove) {
+        $stmt = $this->prepare(
+            'INSERT INTO moves ' .
+            '(game_id, type, move_from, move_to, previous_id, state) ' .
+            'VALUES (?, ?, ?, ?, ?, ?)'
+        );
+        $state = $this->getState();
+        $stmt->bind_param('isssis', $gameId, $type, $piece, $to, $lastMove, $state); // Updated to include $type
+        $stmt->execute();
+        return $this->connection->insert_id;
+    }
 }
