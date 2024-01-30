@@ -18,13 +18,12 @@ class MoveHelper
             }
         }
         $to = array_unique($to);
-
         if (!count($to) and !count($board)) {
             $to[] = '0,0';
         }
         return $to;
     }
-    public static function getPossiblePositions(): array
+    public static function getPossibleMoves(): array
     {
         $possible = [];
         foreach (self::getPositions() as $to){
@@ -38,13 +37,11 @@ class MoveHelper
     public static function getPlayerPositions(): array
     {
         $playerPositions = [];
-
         foreach (Board::getBoard() as $key => $value) {
             if (isset($value[0][0]) && $value[0][0] == Player::getPlayer()) {
                 $playerPositions[] = $key;
             }
         }
-
         return $playerPositions;
     }
 

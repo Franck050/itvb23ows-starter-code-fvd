@@ -112,7 +112,7 @@ if (!count($to))
             </select>
             <select name="to">
                 <?php
-                    foreach (Movehelper::getPossiblePositions() as $pos) {
+                    foreach (Movehelper::getPossibleMoves() as $pos) {
                         echo "<option value=\"$pos\">$pos</option>";
                     }
                 ?>
