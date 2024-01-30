@@ -67,27 +67,27 @@ class MoveHelper
         $player = Player::getPlayer();
         $hand = Hand::getHand($player);
         if (!isset($board[$from])) {
-            Game::setError("Board position is empty");
+            GameController::setError("Board position is empty");
         } elseif ($from == $to) {
-            Game::setError("Tile must move");
+            GameController::setError("Tile must move");
         } elseif (
             isset($board[$from][count($board[$from]) - 1]) &&
             $board[$from][count($board[$from]) - 1][0] != $player
         ) {
-            Game::setError("Tile is not owned by player");
+            GameController::setError("Tile is not owned by player");
         } elseif ($hand['Q']) {
-            Game::setError("Queen bee is not played");
+            GameController::setError("Queen bee is not played");
         } else {
             // Remove $from tile from board array
             $tile = array_pop($board[$from]);
             unset($board[$from]);
 
             if (!hasNeighbour($to, $board) || self::getSplitTiles($board)) {
-                Game::setError("Move would split hive");
+                GameController::setError("Move would split hive");
             } elseif (isset($board[$to]) && $tile[1] != "B") {
-                Game::setError("Tile not empty");
+                GameController::setError("Tile not empty");
             } elseif (($tile[1] == "Q" || $tile[1] == "B") && !self::slide($from, $to)) {
-                Game::setError("Tile must slide");
+                GameController::setError("Tile must slide");
             } else {
                 return true;
             }

@@ -1,13 +1,13 @@
 <?php
 
-include_once 'database.php';
-include_once 'util.php';
+include_once 'Controllers/DatabaseController.php';
 include_once 'GameComponents/Hand.php';
 include_once 'GameComponents/Player.php';
 include_once 'GameComponents/Board.php';
 include_once 'Helpers/MoveHelper.php';
+include_once 'Helpers/util.php';
 
-class Game
+class GameController
 {
 
     function __construct()
@@ -22,7 +22,7 @@ class Game
         unset($_SESSION['last_move']);
         unset($_SESSION['error']);
 
-        $db = Database::getInstance();
+        $db = DatabaseController::getInstance();
         $db->newGame();
     }
 
@@ -43,7 +43,7 @@ class Game
 
     public static function pass()
     {
-        $db = Database::getInstance();
+        $db = DatabaseController::getInstance();
         $currentGameId = self::getGameId();
         $lastMoveId = self::getLastMove();
         $newMoveId = $db->insertPassMove($currentGameId, $lastMoveId);
@@ -85,7 +85,7 @@ class Game
         Hand::updateHand($player, $piece);
         Player::setPlayer(1 - $player);
 
-        $db = Database::getInstance();
+        $db = DatabaseController::getInstance();
         $newMoveId = $db->insertMove(self::getGameId(), 'play', $piece, $to, self::getLastMove());
         self::setLastMove($newMoveId);
     }
@@ -93,7 +93,7 @@ class Game
     public static function undo()
     {
         $lastMove = self::getLastMove();
-        $db = Database::getInstance();
+        $db = DatabaseController::getInstance();
         if (!isset($lastMove) || $lastMove == null) {
             header('Location: index.php');
             exit(0);
@@ -121,7 +121,7 @@ class Game
             Board::setBoard($board);
             Player::setPlayer(1 - $player);
 
-            $db = Database::getInstance();
+            $db = DatabaseController::getInstance();
             $newMoveId = $db->insertMove(self::getGameId(), 'move', $from, $to, self::getLastMove());
             self::setLastMove($newMoveId);
         }

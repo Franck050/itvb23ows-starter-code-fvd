@@ -1,6 +1,6 @@
 <?php
 
-class Database
+class DatabaseController
 {
     private static $instance = null;
     private $connection;
@@ -14,10 +14,10 @@ class Database
         return $this->connection;
     }
 
-    public static function getInstance(): ?Database
+    public static function getInstance(): ?DatabaseController
     {
         if (self::$instance === null) {
-            self::$instance = new Database();
+            self::$instance = new DatabaseController();
         }
         return self::$instance;
     }

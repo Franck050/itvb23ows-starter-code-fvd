@@ -2,18 +2,18 @@
 
 session_start();
 
-include_once 'util.php';
-include_once 'database.php';
-include_once 'Game.php';
+include_once 'Controllers/DatabaseController.php';
+include_once 'GameController.php';
 include_once 'GameComponents/Hand.php';
 include_once 'GameComponents/Player.php';
 include_once 'GameComponents/Board.php';
 include_once 'Helpers/MoveHelper.php';
+include_once 'Helpers/util.php';
 
 $board = Board::getBoard();
 
 if (!isset($board)) {
-    Game::restart();
+    GameController::restart();
     exit(0);
 }
 
@@ -152,7 +152,7 @@ if (!count($to))
         </strong>
         <ol>
             <?php
-                $db = Database::getInstance();
+                $db = DatabaseController::getInstance();
                 $stmt = $db->prepare('SELECT * FROM moves WHERE game_id = '.$_SESSION['game_id']);
                 $stmt->execute();
                 $result = $stmt->get_result();
