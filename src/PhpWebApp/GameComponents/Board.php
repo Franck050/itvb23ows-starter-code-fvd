@@ -6,7 +6,7 @@ class Board
     {
     }
 
-    public static function getBoard()
+    public static function getBoard() : array
     {
         if (!isset($_SESSION['board'])) {
             $_SESSION['board'] = [];
