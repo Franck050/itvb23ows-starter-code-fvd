@@ -1,6 +1,12 @@
 <?php
 
 namespace Controllers;
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
 class DatabaseController
 {
     private static $instance = null;
@@ -8,7 +14,12 @@ class DatabaseController
 
     public function __construct()
     {
-        $this->connection = new \mysqli('db', 'root', 'root', 'hive');
+        $this->connection = new \mysqli(
+            $_ENV['DB_HOSTNAME'],
+            $_ENV['DB_USERNAME'],
+            $_ENV['DB_PASSWORD'],
+            $_ENV['DB_NAME']
+        );
         if($this->connection->connect_error) {
             echo 'connection failed' . $this->connection->connect_error;
         }
