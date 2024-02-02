@@ -1,5 +1,11 @@
 <?php
 
+namespace Helpers;
+use Controllers\GameController;
+use GameComponents\Board;
+use GameComponents\Hand;
+use GameComponents\Player;
+
 class MoveHelper
 {
     public function __construct()

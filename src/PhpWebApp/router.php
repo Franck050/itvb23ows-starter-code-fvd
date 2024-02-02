@@ -1,8 +1,10 @@
 <?php
 
-session_start();
+require_once './vendor/autoload.php';
 
-include_once 'GameController.php';
+use Controllers\GameController;
+
+session_start();
 
 $actionMappings = [
     'Restart' => function() { GameController::restart(); },

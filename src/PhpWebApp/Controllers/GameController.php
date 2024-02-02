@@ -1,23 +1,30 @@
 <?php
 
-require './vendor/autoload.php';
+namespace Controllers;
 
-use Controllers\DatabaseController;
+use GameComponents\Board;
+use GameComponents\Hand;
+use GameComponents\Player;
+use Helpers\MoveHelper;
 
-include_once 'GameComponents/Hand.php';
-include_once 'GameComponents/Player.php';
-include_once 'GameComponents/Board.php';
-//use GameComponents\Board;
-//use GameComponents\Hand;
-//use GameComponents\Player;
-include_once 'Helpers/MoveHelper.php';
-include_once 'Helpers/util.php';
+require_once __DIR__ . '/../Helpers/util.php';
+
 
 class GameController
 {
 
     function __construct()
     {
+    }
+
+    public static function isGameStarted(): bool
+    {
+        return !isset($_SESSION['game_started']) || $_SESSION['game_started'] !== true;
+    }
+
+    public static function startGame()
+    {
+        $_SESSION['game_started'] = true;
     }
 
     public static function restart()
@@ -83,7 +90,7 @@ class GameController
 
     public static function play($piece, $to)
     {
-        if(!self::validatePlay($piece, $to)) {
+        if (!self::validatePlay($piece, $to)) {
             return;
         }
         $player = Player::getPlayer();
@@ -143,7 +150,7 @@ class GameController
         $_SESSION['error'] = $message;
     }
 
-    public function checkWin($player): bool
+    public static function checkWin($player): bool
     {
         $opponent = abs($player - 1);
         foreach (Board::getBoard() as $pos => $tiles) {

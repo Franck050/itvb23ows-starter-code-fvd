@@ -1,23 +1,23 @@
 <?php
 
-require './vendor/autoload.php';
-
 session_start();
 
-use Controllers\DatabaseController;
+require './vendor/autoload.php';
 
-include_once 'GameController.php';
-include_once 'GameComponents/Hand.php';
-include_once 'GameComponents/Player.php';
-include_once 'GameComponents/Board.php';
-include_once 'Helpers/MoveHelper.php';
+use Controllers\GameController;
+use Controllers\DatabaseController;
+use GameComponents\Board;
+use GameComponents\Hand;
+use GameComponents\Player;
+use Helpers\MoveHelper;
+
 include_once 'Helpers/util.php';
 
 $board = Board::getBoard();
 
-if (!isset($board)) {
+if (GameController::isGameStarted()) {
     GameController::restart();
-    exit(0);
+    GameController::startGame();
 }
 
 $player = Player::getPlayer();
@@ -42,22 +42,22 @@ if (!count($to))
         <link rel="stylesheet" href="styles/index.css">
     </head>
     <body>
-        <h1>
-            <?php
-            $WinnerWhite = GameController::checkWin(0);
-            $WinnerBlack = GameController::checkWin(1);
-
-            if ($WinnerWhite && $WinnerBlack) {
-                echo "Draw!";
-            } else {
-                if ($WinnerWhite) {
-                    echo "White wins!";
-                } elseif ($WinnerBlack) {
-                    echo "Black wins!";
-                }
-            }
-            ?>
-        </h1>
+<!--        <h1>-->
+<!--            --><?php
+//            $winnerWhite = GameController::checkWin(0);
+//            $winnerBlack = GameController::checkWin(1);
+//
+//            if ($winnerWhite && $winnerBlack) {
+//                echo "Draw!";
+//            } else {
+//                if ($winnerWhite) {
+//                    echo "White wins!";
+//                } elseif ($winnerBlack) {
+//                    echo "Black wins!";
+//                }
+//            }
+//            ?>
+<!--        </h1>-->
         <div class="board">
             <?php
                 $min_p = 1000;
@@ -185,4 +185,3 @@ if (!count($to))
         </form>
     </body>
 </html>
-
