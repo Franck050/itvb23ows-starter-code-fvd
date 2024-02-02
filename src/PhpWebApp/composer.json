@@ -1,0 +1,10 @@
+{
+    "name": "fvd01/php-web-app",
+    "autoload": {
+        "psr-4": {
+            "Controllers\\": "./Controllers",
+            "GameComponents\\": "./GameComponents"
+        }
+    },
+    "require": {}
+}

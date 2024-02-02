@@ -1,5 +1,7 @@
 <?php
 
+//namespace GameComponents;
+
 class Player
 {
     public function __construct()

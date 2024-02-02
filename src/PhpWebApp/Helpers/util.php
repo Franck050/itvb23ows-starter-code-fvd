@@ -18,7 +18,24 @@ function isNeighbour($a, $b): bool
     return false;
 }
 
-
+function getNeighbours($a): array
+{
+    $board = Board::getBoard();
+    $neighbours = [];
+    $b = explode(',', $a);
+    foreach ($GLOBALS['OFFSETS'] as $pq) {
+        $p = $b[0] + $pq[0];
+        $q = $b[1] + $pq[1];
+        $position = $p . "," . $q;
+        if (
+            isset($board[$position]) &&
+            isNeighbour($a, $position)
+        ) {
+            $neighbours[] = $position;
+        }
+    }
+    return $neighbours;
+}
 
 function hasNeighbour($a, $board) : bool
 {

@@ -1,5 +1,7 @@
 <?php
 
+//namespace GameComponents;
+
 class Hand
 {
     public function __construct()

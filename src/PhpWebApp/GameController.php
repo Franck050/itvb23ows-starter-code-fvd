@@ -1,9 +1,15 @@
 <?php
 
-include_once 'Controllers/DatabaseController.php';
+require './vendor/autoload.php';
+
+use Controllers\DatabaseController;
+
 include_once 'GameComponents/Hand.php';
 include_once 'GameComponents/Player.php';
 include_once 'GameComponents/Board.php';
+//use GameComponents\Board;
+//use GameComponents\Hand;
+//use GameComponents\Player;
 include_once 'Helpers/MoveHelper.php';
 include_once 'Helpers/util.php';
 
@@ -92,18 +98,23 @@ class GameController
 
     public static function undo()
     {
-        $lastMove = self::getLastMove();
         $db = DatabaseController::getInstance();
-        if (!isset($lastMove) || $lastMove == null) {
-            header('Location: index.php');
-            exit(0);
-        }
-        $previousMoveId = $db->undoLastMove($lastMove);
-        if ($previousMoveId === false) {
-            self::setError('Undo failed. Invalid move or database error');
+        $lastMove = $db->getLastMove(self::getGameId());
+
+        if ($lastMove[5] == null) {
+            self::restart();
             return;
         }
-        self::setLastMove($previousMoveId);
+        Player::setPlayer(1 - Player::getPlayer());
+        $db->deleteMove($lastMove[0]);
+        $previousMove = $db->getMove($lastMove[5]);
+
+        if (!$previousMove) {
+            self::restart();
+            return;
+        }
+        $db->setState($previousMove[6]);
+        self::setLastMove($lastMove[5]);
     }
 
     public static function move($from, $to)
@@ -130,5 +141,19 @@ class GameController
     public static function setError($message)
     {
         $_SESSION['error'] = $message;
+    }
+
+    public function checkWin($player): bool
+    {
+        $opponent = abs($player - 1);
+        foreach (Board::getBoard() as $pos => $tiles) {
+            $topTile = end($tiles);
+            if ($topTile[0] == $opponent && $topTile[1] == 'Q') {
+                if (count(getNeighbours($pos)) == 6) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

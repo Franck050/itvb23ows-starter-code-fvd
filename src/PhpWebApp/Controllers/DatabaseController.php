@@ -1,5 +1,6 @@
 <?php
 
+namespace Controllers;
 class DatabaseController
 {
     private static $instance = null;
@@ -76,16 +77,27 @@ class DatabaseController
         return $this->connection->insert_id;
     }
 
-    public function undoLastMove($lastMoveId) {
-        $stmt = $this->prepare('SELECT * FROM moves WHERE id = ?');
-        $stmt->bind_param('i', $lastMoveId);
+    public function getLastMove(int $gameId): ?array
+    {
+        $stmt = $this->prepare('SELECT * from moves WHERE game_id = ? ORDER BY id DESC LIMIT 1');
+        $stmt->bind_param('i', $gameId);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_array();
+        return $result == null ? null : $result;
+    }
 
-        if (!$result) {
-            return false;
-        }
-        $this->setState($result[6]);
-        return $result[5];
+    public function deleteMove(int $id)
+    {
+        $stmt = $this->prepare('DELETE FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+    }
+
+    public function getMove(int $id)
+    {
+        $stmt = $this->prepare('SELECT * FROM moves WHERE id = ?');
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_array();
     }
 }

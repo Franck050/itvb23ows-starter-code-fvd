@@ -1,8 +1,11 @@
 <?php
 
+require './vendor/autoload.php';
+
 session_start();
 
-include_once 'Controllers/DatabaseController.php';
+use Controllers\DatabaseController;
+
 include_once 'GameController.php';
 include_once 'GameComponents/Hand.php';
 include_once 'GameComponents/Player.php';
@@ -39,6 +42,22 @@ if (!count($to))
         <link rel="stylesheet" href="styles/index.css">
     </head>
     <body>
+        <h1>
+            <?php
+            $WinnerWhite = GameController::checkWin(0);
+            $WinnerBlack = GameController::checkWin(1);
+
+            if ($WinnerWhite && $WinnerBlack) {
+                echo "Draw!";
+            } else {
+                if ($WinnerWhite) {
+                    echo "White wins!";
+                } elseif ($WinnerBlack) {
+                    echo "Black wins!";
+                }
+            }
+            ?>
+        </h1>
         <div class="board">
             <?php
                 $min_p = 1000;

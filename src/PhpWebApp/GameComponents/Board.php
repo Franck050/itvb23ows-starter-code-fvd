@@ -1,5 +1,7 @@
 <?php
 
+//namespace GameComponents;
+
 class Board
 {
     public function __construct()
