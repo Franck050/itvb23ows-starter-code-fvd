@@ -16,7 +16,7 @@ class MoveHelper
     {
         $board = Board::getBoard();
         $to = [];
-        foreach ($GLOBALS['OFFSETS'] as $pq) {
+        foreach (GameController::$offsets as $pq) {
             foreach (array_keys($board) as $pos) {
                 $pq2 = explode(',', $pos);
                 $to[] = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
@@ -59,9 +59,9 @@ class MoveHelper
 
         if (isset($board[$pos])) {
             return false;
-        } else if(count($board) && !hasNeighBour($pos, $board)){
+        } else if(count($board) && !self::hasNeighBour($pos, $board)){
             return false;
-        } else if(array_sum($hand) < 11 && !neighboursAreSameColor($player, $pos, $board) ) {
+        } else if(array_sum($hand) < 11 && !self::neighboursAreSameColor($player, $pos, $board) ) {
             return false;
         }
         return true;
@@ -88,7 +88,7 @@ class MoveHelper
             $tile = array_pop($board[$from]);
             unset($board[$from]);
 
-            if (!hasNeighbour($to, $board) || self::getSplitTiles($board)) {
+            if (!self::hasNeighbour($to, $board) || self::getSplitTiles($board)) {
                 GameController::setError("Move would split hive");
             } elseif (isset($board[$to]) && $tile[1] != "B") {
                 GameController::setError("Tile not empty");
@@ -118,14 +118,14 @@ class MoveHelper
     }
 
     private static function hasValidMovement($board, $from, $to): bool {
-        return hasNeighbour($to, $board) && isNeighbour($from, $to);
+        return self::hasNeighbour($to, $board) && self::isNeighbour($from, $to);
     }
 
     private static function findCommonNeighbors($toCoordinates, $from): array {
         $commonNeighbors = [];
-        foreach ($GLOBALS['OFFSETS'] as $offset) {
+        foreach (GameController::$offsets as $offset) {
             $neighborCoordinates = self::getNeighborCoordinates($toCoordinates, $offset);
-            if (isNeighbour($from, implode(",", $neighborCoordinates))) {
+            if (self::isNeighbour($from, implode(",", $neighborCoordinates))) {
                 $commonNeighbors[] = implode(",", $neighborCoordinates);
             }
         }
@@ -166,7 +166,7 @@ class MoveHelper
 
         while ($queue) {
             $next = explode(',', array_shift($queue));
-            foreach ($GLOBALS['OFFSETS'] as $pq) {
+            foreach (GameController::$offsets as $pq) {
                 list($p, $q) = $pq;
                 $p += $next[0];
                 $q += $next[1];
@@ -181,5 +181,74 @@ class MoveHelper
         }
 
         return $all;
+    }
+
+    public static function isNeighbour($a, $b): bool
+    {
+        $a = explode(',', $a);
+        $b = explode(',', $b);
+
+        if (
+            $a[0] == $b[0] && abs($a[1] - $b[1]) == 1 ||
+            $a[1] == $b[1] && abs($a[0] - $b[0]) == 1 ||
+            $a[0] + $a[1] == $b[0] + $b[1]
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function getNeighbours($a): array
+    {
+        $board = Board::getBoard();
+        $neighbours = [];
+        $b = explode(',', $a);
+        foreach (GameController::$offsets as $pq) {
+            $p = $b[0] + $pq[0];
+            $q = $b[1] + $pq[1];
+            $position = $p . "," . $q;
+            if (
+                isset($board[$position]) &&
+                self::isNeighbour($a, $position)
+            ) {
+                $neighbours[] = $position;
+            }
+        }
+        return $neighbours;
+    }
+
+    public static function hasNeighbour($a, $board) : bool
+    {
+        $b = explode(',', $a);
+
+        foreach (GameController::$offsets as $pq) {
+            $p = $b[0] + $pq[0];
+            $q = $b[1] + $pq[1];
+
+            $position = $p . "," . $q;
+
+            if (isset($board[$position]) &&
+                self::isNeighbour($a, $position)
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function neighboursAreSameColor($player, $a, $board): bool
+    {
+        foreach ($board as $b => $st) {
+            if (!$st) continue;
+            $c = $st[count($st) - 1][0];
+            if ($c != $player && self::isNeighbour($a, $b)) return false;
+        }
+        return true;
+    }
+
+    public static function playerMustPlayQueen($piece, $hand): bool
+    {
+        return $piece != 'Q' && array_sum($hand) <= 8 && $hand['Q'];
     }
 }
