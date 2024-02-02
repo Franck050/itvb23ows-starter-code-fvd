@@ -1,6 +1,6 @@
 <?php
 
-namespace GameComponents;
+namespace gameComponents;
 
 class Player
 {
@@ -17,7 +17,7 @@ class Player
         return $_SESSION['player'];
     }
 
-    public static function setPlayer(int $player)
+    public static function setPlayer(int $player): void
     {
         $_SESSION['player'] = $player;
     }

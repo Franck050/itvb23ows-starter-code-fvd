@@ -1,10 +1,11 @@
 <?php
 
-namespace Helpers;
-use Controllers\GameController;
-use GameComponents\Board;
-use GameComponents\Hand;
-use GameComponents\Player;
+namespace helpers;
+use controllers\GameController;
+use gameComponents\Board;
+use gameComponents\Hand;
+use gameComponents\Player;
+use pieces\Grasshopper;
 
 class MoveHelper
 {
@@ -84,7 +85,6 @@ class MoveHelper
         } elseif ($hand['Q']) {
             GameController::setError("Queen bee is not played");
         } else {
-            // Remove $from tile from board array
             $tile = array_pop($board[$from]);
             unset($board[$from]);
 
@@ -94,6 +94,14 @@ class MoveHelper
                 GameController::setError("Tile not empty");
             } elseif (($tile[1] == "Q" || $tile[1] == "B") && !self::slide($from, $to)) {
                 GameController::setError("Tile must slide");
+            } elseif ($tile[1] == 'G') {
+                $gh = new Grasshopper();
+                $validMoves = $gh->findAvailableMoves($board, $from);
+                if (!in_array($to, $validMoves)) {
+                    $_SESSION['error'] = "Grasshopper cannot jump";
+                } else {
+                    return true;
+                }
             } else {
                 return true;
             }

@@ -1,6 +1,6 @@
 <?php
 
-namespace GameComponents;
+namespace gameComponents;
 
 class Hand
 {
@@ -21,7 +21,7 @@ class Hand
         return $hand;
     }
 
-    public static function setHand(array $hand)
+    public static function setHand(array $hand): void
     {
         $_SESSION['hand'] = $hand;
     }
@@ -46,7 +46,8 @@ class Hand
         ];
     }
 
-    public static function updateHand($player, $piece) {
+    public static function updateHand($player, $piece): void
+    {
         if (!isset($_SESSION['hand'][$player][$piece])) {
             return;
         }

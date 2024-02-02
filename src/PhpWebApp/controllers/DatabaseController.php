@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace controllers;
 
 use Dotenv\Dotenv;
 
@@ -9,8 +9,8 @@ $dotenv->load();
 
 class DatabaseController
 {
-    private static $instance = null;
-    private $connection;
+    private static ?DatabaseController $instance = null;
+    private \mysqli $connection;
 
     public function __construct()
     {
@@ -34,21 +34,22 @@ class DatabaseController
         return self::$instance;
     }
 
-    public function prepare($query) {
+    public function prepare($query)
+    {
         return $this->connection->prepare($query);
     }
 
-    function getConnection()
+    function getConnection(): \mysqli
     {
         return $this->connection;
     }
 
-    function getState()
+    function getState(): string
     {
         return serialize([$_SESSION['hand'], $_SESSION['board'], $_SESSION['player']]);
     }
 
-    function setState($state)
+    function setState($state): void
     {
         list($a, $b, $c) = unserialize($state);
         $_SESSION['hand'] = $a;
@@ -56,7 +57,7 @@ class DatabaseController
         $_SESSION['player'] = $c;
     }
 
-    function newGame()
+    function newGame(): void
     {
         $stmt = $this->prepare('INSERT INTO games VALUES ()');
         $stmt->execute();
@@ -76,7 +77,8 @@ class DatabaseController
         return $this->connection->insert_id;
     }
 
-    public function insertMove($gameId, $type, $from, $to, $lastMove) {
+    public function insertMove($gameId, $type, $from, $to, $lastMove)
+    {
         $stmt = $this->prepare(
             'INSERT INTO moves ' .
             '(game_id, type, move_from, move_to, previous_id, state) ' .
@@ -97,7 +99,7 @@ class DatabaseController
         return $result == null ? null : $result;
     }
 
-    public function deleteMove(int $id)
+    public function deleteMove(int $id): void
     {
         $stmt = $this->prepare('DELETE FROM moves WHERE id = ?');
         $stmt->bind_param('i', $id);

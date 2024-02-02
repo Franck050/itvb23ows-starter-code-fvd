@@ -4,14 +4,12 @@ session_start();
 
 require './vendor/autoload.php';
 
-use Controllers\GameController;
-use Controllers\DatabaseController;
-use GameComponents\Board;
-use GameComponents\Hand;
-use GameComponents\Player;
-use Helpers\MoveHelper;
-
-include_once 'Helpers/util.php';
+use controllers\GameController;
+use controllers\DatabaseController;
+use gameComponents\Board;
+use gameComponents\Hand;
+use gameComponents\Player;
+use helpers\MoveHelper;
 
 $board = Board::getBoard();
 
@@ -63,8 +61,6 @@ $to = MoveHelper::getPositions();
                 }
                 foreach (array_filter($board) as $pos => $tile) {
                     $pq = explode(',', $pos);
-                    $pq[0];
-                    $pq[1];
                     $h = count($tile);
                     echo '<div class="tile player';
                     echo $tile[$h-1][0];
@@ -110,39 +106,47 @@ $to = MoveHelper::getPositions();
             } ?>
         </div>
         <form method="post" action="router.php">
-            <select name="piece">
-                <?php
-                    foreach ($hand[$player] as $tile => $ct) {
-                        if ($ct > 0) {
-                            echo "<option value=\"$tile\">$tile</option>";
+            <label>
+                <select name="piece">
+                    <?php
+                        foreach ($hand[$player] as $tile => $ct) {
+                            if ($ct > 0) {
+                                echo "<option value=\"$tile\">$tile</option>";
+                            }
                         }
-                    }
-                ?>
-            </select>
-            <select name="to">
-                <?php
-                    foreach (Movehelper::getPossibleMoves() as $pos) {
-                        echo "<option value=\"$pos\">$pos</option>";
-                    }
-                ?>
-            </select>
+                    ?>
+                </select>
+            </label>
+            <label>
+                <select name="to">
+                    <?php
+                        foreach (Movehelper::getPossibleMoves() as $pos) {
+                            echo "<option value=\"$pos\">$pos</option>";
+                        }
+                    ?>
+                </select>
+            </label>
             <input type="submit" name="action" value="Play">
         </form>
         <form method="post" action="router.php">
-            <select name="from">
-                <?php
-                    foreach (Movehelper::getPlayerPositions() as $pos) {
-                        echo "<option value=\"$pos\">$pos</option>";
-                    }
-                ?>
-            </select>
-            <select name="to">
-                <?php
-                    foreach (Movehelper::getPositions() as $pos) {
-                        echo "<option value=\"$pos\">$pos</option>";
-                    }
-                ?>
-            </select>
+            <label>
+                <select name="from">
+                    <?php
+                        foreach (Movehelper::getPlayerPositions() as $pos) {
+                            echo "<option value=\"$pos\">$pos</option>";
+                        }
+                    ?>
+                </select>
+            </label>
+            <label>
+                <select name="to">
+                    <?php
+                        foreach (Movehelper::getPositions() as $pos) {
+                            echo "<option value=\"$pos\">$pos</option>";
+                        }
+                    ?>
+                </select>
+            </label>
             <input type="submit" name="action" value="Move">
         </form>
         <form method="post" action="router.php">

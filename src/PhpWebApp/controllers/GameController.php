@@ -1,16 +1,16 @@
 <?php
 
-namespace Controllers;
+namespace controllers;
 
-use GameComponents\Board;
-use GameComponents\Hand;
-use GameComponents\Player;
-use Helpers\MoveHelper;
+use gameComponents\Board;
+use gameComponents\Hand;
+use gameComponents\Player;
+use helpers\MoveHelper;
 
 
 class GameController
 {
-    public static $offsets = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
+    public static array $offsets = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
     function __construct()
     {
     }
@@ -20,12 +20,12 @@ class GameController
         return !isset($_SESSION['game_started']) || $_SESSION['game_started'] !== true;
     }
 
-    public static function startGame()
+    public static function startGame(): void
     {
         $_SESSION['game_started'] = true;
     }
 
-    public static function restart()
+    public static function restart(): void
     {
         Board::setBoard([]);
         Hand::setHand(Hand::resetHand());
@@ -48,12 +48,12 @@ class GameController
         return $_SESSION['last_move'] ?? null;
     }
 
-    public static function setLastMove(int $lastMove)
+    public static function setLastMove(int $lastMove): void
     {
         $_SESSION['last_move'] = $lastMove;
     }
 
-    public static function pass()
+    public static function pass(): void
     {
         $db = DatabaseController::getInstance();
         $currentGameId = self::getGameId();
@@ -87,7 +87,7 @@ class GameController
         return false;
     }
 
-    public static function play($piece, $to)
+    public static function play($piece, $to): void
     {
         if (!self::validatePlay($piece, $to)) {
             return;
@@ -102,7 +102,7 @@ class GameController
         self::setLastMove($newMoveId);
     }
 
-    public static function undo()
+    public static function undo(): void
     {
         $db = DatabaseController::getInstance();
         $lastMove = $db->getLastMove(self::getGameId());
@@ -123,7 +123,7 @@ class GameController
         self::setLastMove($lastMove[5]);
     }
 
-    public static function move($from, $to)
+    public static function move($from, $to): void
     {
         $player = Player::getPlayer();
         $board = Board::getBoard();
@@ -144,7 +144,7 @@ class GameController
         }
     }
 
-    public static function setError($message)
+    public static function setError($message): void
     {
         $_SESSION['error'] = $message;
     }

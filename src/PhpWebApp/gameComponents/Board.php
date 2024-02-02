@@ -1,6 +1,6 @@
 <?php
 
-namespace GameComponents;
+namespace gameComponents;
 
 class Board
 {
@@ -8,7 +8,7 @@ class Board
     {
     }
 
-    public static function getBoard() : array
+    public static function getBoard(): array
     {
         if (!isset($_SESSION['board'])) {
             $_SESSION['board'] = [];
@@ -17,12 +17,13 @@ class Board
         return $_SESSION['board'];
     }
 
-    public static function setBoard(array $board)
+    public static function setBoard(array $board): void
     {
         $_SESSION['board'] = $board;
     }
 
-    public static function setPiece($to, $piece) {
+    public static function setPiece($to, $piece): void
+    {
         if (!isset($_SESSION['board'])) {
             $_SESSION['board'] = [];
         }
