@@ -21,4 +21,9 @@ class Player
     {
         $_SESSION['player'] = $player;
     }
+
+    public static function playerPositions($board, $player, $from): bool
+    {
+        return $board[$from][count($board[$from]) - 1][0] == $player;
+    }
 }

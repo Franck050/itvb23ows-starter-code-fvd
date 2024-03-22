@@ -132,8 +132,10 @@ $to = MoveHelper::getPositions();
             <label>
                 <select name="from">
                     <?php
-                        foreach (Movehelper::getPlayerPositions() as $pos) {
-                            echo "<option value=\"$pos\">$pos</option>";
+                        foreach (array_keys($board) as $pos) {
+                            if (Player::playerPositions($board, $player, $pos)) {
+                                echo "<option value=\"$pos\">$pos</option>";
+                            }
                         }
                     ?>
                 </select>

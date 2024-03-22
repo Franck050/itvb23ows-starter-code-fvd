@@ -5,7 +5,6 @@ use controllers\GameController;
 use gameComponents\Board;
 use gameComponents\Hand;
 use gameComponents\Player;
-use pieces\Grasshopper;
 
 class MoveHelper
 {
@@ -41,17 +40,6 @@ class MoveHelper
         return $possible;
     }
 
-    public static function getPlayerPositions(): array
-    {
-        $playerPositions = [];
-        foreach (Board::getBoard() as $key => $value) {
-            if (isset($value[0][0]) && $value[0][0] == Player::getPlayer()) {
-                $playerPositions[] = $key;
-            }
-        }
-        return $playerPositions;
-    }
-
     private static function validatePosition($pos): bool
     {
         $board = Board::getBoard();
@@ -73,122 +61,114 @@ class MoveHelper
         $board = Board::getBoard();
         $player = Player::getPlayer();
         $hand = Hand::getHand($player);
-        if (!isset($board[$from])) {
-            GameController::setError("Board position is empty");
-        } elseif ($from == $to) {
+
+        if ($from == $to) {
             GameController::setError("Tile must move");
+        } elseif (!isset($board[$from])) {
+            GameController::setError("Board position is empty");
         } elseif (
             isset($board[$from][count($board[$from]) - 1]) &&
             $board[$from][count($board[$from]) - 1][0] != $player
-        ) {
+        )
             GameController::setError("Tile is not owned by player");
-        } elseif ($hand['Q']) {
+        elseif ($hand['Q'])
             GameController::setError("Queen bee is not played");
-        } else {
+        else {
             $tile = array_pop($board[$from]);
-            unset($board[$from]);
+            if (count($board[$from]) == 0) {
+                unset($board[$from]);
+            }
 
-            if (!self::hasNeighbour($to, $board) || self::getSplitTiles($board)) {
+            if (isset($board[$to]) && !$tile[1] == ['B']) {
+                GameController::setError("Tile is already taken");
+            } elseif (!self::hasNeighBour($to, $board) || self::checkForHiveSplit($board)) {
                 GameController::setError("Move would split hive");
-            } elseif (isset($board[$to]) && $tile[1] != "B") {
-                GameController::setError("Tile not empty");
-            } elseif (($tile[1] == "Q" || $tile[1] == "B") && !self::slide($from, $to)) {
-                GameController::setError("Tile must slide");
+            } elseif (self::slide($from, $to, $board)) {
+                GameController::setError("Slide is not allowed");
+            } elseif ($tile[1] == 'A') {
+                return ValidateMoveInsect::validateAntMove($board, $from, $to);
+            } elseif ($tile[1] == 'B') {
+                return ValidateMoveInsect::validateBeetleMove($board, $from, $to);
             } elseif ($tile[1] == 'G') {
-                $gh = new Grasshopper();
-                $validMoves = $gh->findAvailableMoves($board, $from);
-                if (!in_array($to, $validMoves)) {
-                    $_SESSION['error'] = "Grasshopper cannot jump";
-                } else {
-                    return true;
-                }
-            } else {
-                return true;
+                return ValidateMoveInsect::validateGrasshopperMove($board, $from, $to);
+            } elseif ($tile[1] == 'Q') {
+                return ValidateMoveInsect::validateQueenBeeMove($board, $from, $to);
+            } elseif ($tile[1] == 'S') {
+                return ValidateMoveInsect::validateSpiderMove($board, $from, $to);
             }
         }
         return false;
     }
 
-    private static function slide($from, $to): bool {
-        $board = Board::getBoard();
-        if (!self::hasValidMovement($board, $from, $to)) {
-            return false;
-        }
-
-        $toCoordinates = explode(',', $to);
-        $commonNeighbors = self::findCommonNeighbors($toCoordinates, $from);
-
-        if (self::isMovementBlocked($board, $commonNeighbors, $from, $to)) {
-            return false;
-        }
-
-        return self::canSlideBasedOnLength($board, $commonNeighbors, $from, $to);
-    }
-
-    private static function hasValidMovement($board, $from, $to): bool {
-        return self::hasNeighbour($to, $board) && self::isNeighbour($from, $to);
-    }
-
-    private static function findCommonNeighbors($toCoordinates, $from): array {
-        $commonNeighbors = [];
-        foreach (GameController::$offsets as $offset) {
-            $neighborCoordinates = self::getNeighborCoordinates($toCoordinates, $offset);
-            if (self::isNeighbour($from, implode(",", $neighborCoordinates))) {
-                $commonNeighbors[] = implode(",", $neighborCoordinates);
-            }
-        }
-        return $commonNeighbors;
-    }
-
-    private static function getNeighborCoordinates($baseCoordinates, $offset): array {
-        return [$baseCoordinates[0] + $offset[0], $baseCoordinates[1] + $offset[1]];
-    }
-
-    private static function isMovementBlocked($board, $commonNeighbors, $from, $to): bool {
-        foreach ($commonNeighbors as $neighbor) {
-            if (isset($board[$neighbor]) && $board[$neighbor]) {
-                return false;
-            }
-        }
-
-        return (!isset($board[$from]) || !$board[$from]) && (!isset($board[$to]) || !$board[$to]);
-    }
-
-    private static function canSlideBasedOnLength($board, $commonNeighbors, $from, $to): bool {
-        $lengths = array_map(function ($position) use ($board) {
-            $item = $board[$position] ?? '';
-            if (is_string($item)) {
-                return strlen($item);
-            } else {
-                return count($item);
-            }
-        }, array_merge($commonNeighbors, [$from, $to]));
-
-        return min($lengths[0], $lengths[1]) <= max($lengths[2], $lengths[3]);
-    }
-
-    private static function getSplitTiles($board): array
+    public static function slide($from, $to, $board): bool
     {
-        $all = array_keys($board);
-        $queue = [array_shift($all)];
+        if (!self::isNeighbour($from, $to) || !self::isMovePossible($to, $board)) {
+            return false;
+        }
+        if (!self::isPositionAvailable($from, $to, $board)) {
+            return false;
+        }
+        return self::doesNotSplitHive($from, $to, $board);
+    }
 
-        while ($queue) {
-            $next = explode(',', array_shift($queue));
-            foreach (GameController::$offsets as $pq) {
-                list($p, $q) = $pq;
-                $p += $next[0];
-                $q += $next[1];
+    private static function isMovePossible($to, $board): bool
+    {
+        return !isset($board[$to]) && self::hasNeighbour($to, $board);
+    }
 
-                $position = $p . "," . $q;
+    private static function doesNotSplitHive($from, $to, $board): bool
+    {
+        $tempBoard = $board;
+        $tempBoard[$to] = $tempBoard[$from];
+        unset($tempBoard[$from]);
 
-                if (in_array($position, $all)) {
-                    $queue[] = $position;
-                    $all = array_diff($all, [$position]);
+        return !self::checkForHiveSplit($tempBoard);
+    }
+
+    public static function checkForHiveSplit($board): bool
+    {
+        if (empty($board)) {
+            return false;
+        }
+
+        $visited = [];
+        $positions = array_keys($board);
+        $queue = self::initializeQueue($board);
+
+        self::performBreadthFirstSearch($board, $queue, $visited);
+
+        return self::isHiveSplit($positions, $visited);
+    }
+
+    private static function initializeQueue($board): array
+    {
+        $positions = array_keys($board);
+        return [reset($positions)];
+    }
+
+    private static function performBreadthFirstSearch($board, &$queue, &$visited): void
+    {
+        while (!empty($queue)) {
+            $current = array_shift($queue);
+            $visited[$current] = true;
+
+            $neighbors = self::getNeighbours($current);
+            foreach ($neighbors as $neighbor) {
+                if (isset($board[$neighbor]) && !isset($visited[$neighbor])) {
+                    $queue[] = $neighbor;
                 }
             }
         }
+    }
 
-        return $all;
+    private static function isHiveSplit($allPositions, $visited): bool
+    {
+        foreach ($allPositions as $position) {
+            if (!isset($visited[$position])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static function isNeighbour($a, $b): bool
@@ -258,5 +238,10 @@ class MoveHelper
     public static function playerMustPlayQueen($piece, $hand): bool
     {
         return $piece != 'Q' && array_sum($hand) <= 8 && $hand['Q'];
+    }
+
+    public static function isPositionAvailable($from, $to, $board): bool
+    {
+        return isset($board[$from]) && $board[$from] || isset($board[$to]) && $board[$to];
     }
 }

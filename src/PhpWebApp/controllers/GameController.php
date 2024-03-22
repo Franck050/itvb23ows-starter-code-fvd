@@ -55,6 +55,14 @@ class GameController
 
     public static function pass(): void
     {
+        if (count(MoveHelper::getPossibleMoves()) > 0) {
+            GameController::setError("There are possible moves!");
+            return;
+        }
+        if (count(MoveHelper::getPositions()) > 0 ) {
+            GameController::setError("There are possible plays!");
+            return;
+        }
         $db = DatabaseController::getInstance();
         $currentGameId = self::getGameId();
         $lastMoveId = self::getLastMove();
@@ -125,23 +133,27 @@ class GameController
 
     public static function move($from, $to): void
     {
+        if (!MoveHelper::validateMove($from, $to)) {
+            return;
+        }
+
         $player = Player::getPlayer();
         $board = Board::getBoard();
-        unset($_SESSION['error']);
 
-        $validMove = MoveHelper::validateMove($from, $to);
+        $tile = array_pop($board[$from]);
+        $board[$to][] = $tile;
 
-        if ($validMove) {
-            $tile = array_pop($board[$from]);
+        if (empty($board[$from])) {
             unset($board[$from]);
-            $board[$to] = [$tile];
-            Board::setBoard($board);
-            Player::setPlayer(1 - $player);
-
-            $db = DatabaseController::getInstance();
-            $newMoveId = $db->insertMove(self::getGameId(), 'move', $from, $to, self::getLastMove());
-            self::setLastMove($newMoveId);
         }
+
+        Board::setBoard($board);
+
+        $db = DatabaseController::getInstance();
+        $newMoveId = $db->insertMove(self::getGameId(), 'move', $from, $to, self::getLastMove());
+        self::setLastMove($newMoveId);
+
+        Player::setPlayer(1 - $player);
     }
 
     public static function setError($message): void

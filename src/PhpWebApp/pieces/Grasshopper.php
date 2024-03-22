@@ -4,51 +4,33 @@ namespace pieces;
 
 use controllers\GameController;
 
-class Grasshopper
+class Grasshopper extends Piece
 {
-    public function findAvailableMoves(array $board, string $currentLocation): array
+    #[\Override] public function findAvailableMoves(array $board, string $currentLocation): array
     {
+        if ($this->beetleBlockCheck($board, $currentLocation)) {
+            return [];
+        }
+
         $currentCoordinates = explode(',', $currentLocation);
         $validMoves = [];
-        $directions = GameController::$offsets;
 
-        foreach ($directions as $direction) {
+        foreach (GameController::$offsets as $direction) {
             $newPosition = $this->locateNextFreeSpot($currentCoordinates, $direction, $board);
-            if ($newPosition) {
+            if ($newPosition !== null) {
                 $validMoves[] = $newPosition;
             }
         }
-
         return $validMoves;
     }
 
     private function locateNextFreeSpot(array $currentCoordinates, array $direction, array $board): ?string
     {
-        list($nextX, $nextY) = $this->calculateNextSpot($currentCoordinates, $direction);
-
-        $nextSpot = $this->convertToBoardCoordinates($nextX, $nextY);
-
-        if (!isset($board[$nextSpot])) {
-            return null;
-        }
-
-        while (isset($board[$nextSpot])) {
-            list($nextX, $nextY) = $this->calculateNextSpot([$nextX, $nextY], $direction);
-            $nextSpot = $this->convertToBoardCoordinates($nextX, $nextY);
-        }
-
+        list($x, $y) = $currentCoordinates;
+        do {
+            list($x, $y) = $this->calculateNextSpot([$x, $y], $direction);
+            $nextSpot = $this->convertToBoardCoordinates($x, $y);
+        } while (isset($board[$nextSpot]));
         return $nextSpot;
-    }
-
-    private function calculateNextSpot(array $coordinates, array $direction): array
-    {
-        $x = $coordinates[0] + $direction[0];
-        $y = $coordinates[1] + $direction[1];
-        return [$x, $y];
-    }
-
-    private function convertToBoardCoordinates(int $x, int $y): string
-    {
-        return $x . ',' . $y;
     }
 }

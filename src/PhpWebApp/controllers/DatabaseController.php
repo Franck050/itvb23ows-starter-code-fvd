@@ -34,7 +34,7 @@ class DatabaseController
         return self::$instance;
     }
 
-    public function prepare($query)
+    public function prepare($query): \mysqli_stmt
     {
         return $this->connection->prepare($query);
     }
@@ -49,7 +49,7 @@ class DatabaseController
         return serialize([$_SESSION['hand'], $_SESSION['board'], $_SESSION['player']]);
     }
 
-    function setState($state): void
+    public function setState($state): void
     {
         list($a, $b, $c) = unserialize($state);
         $_SESSION['hand'] = $a;
@@ -57,14 +57,14 @@ class DatabaseController
         $_SESSION['player'] = $c;
     }
 
-    function newGame(): void
+    public function newGame(): void
     {
         $stmt = $this->prepare('INSERT INTO games VALUES ()');
         $stmt->execute();
         $_SESSION['game_id'] = $this->getConnection()->insert_id;
     }
 
-    function insertPassMove($gameId, $previousId)
+    public function insertPassMove($gameId, $previousId): int
     {
         $stmt = $this->prepare(
             'INSERT INTO moves ' .
