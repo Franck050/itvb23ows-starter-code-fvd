@@ -85,7 +85,7 @@ class DatabaseController
             'VALUES (?, ?, ?, ?, ?, ?)'
         );
         $state = $this->getState();
-        $stmt->bind_param('isssis', $gameId, $type, $from, $to, $lastMove, $state); // Updated to include $type
+        $stmt->bind_param('isssis', $gameId, $type, $from, $to, $lastMove, $state);
         $stmt->execute();
         return $this->connection->insert_id;
     }
