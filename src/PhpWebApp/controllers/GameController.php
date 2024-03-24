@@ -110,6 +110,34 @@ class GameController
         self::setLastMove($newMoveId);
     }
 
+    public static function executeAiMove(): void
+    {
+        $possibleMovesCount = count(MoveHelper::getPossibleMoves());
+
+        $playerHands = [
+            Hand::getHand(0),
+            Hand::getHand(1),
+        ];
+        $aiDecision = AiController::postToGetAiMove(Board::getBoard(), $possibleMovesCount, $playerHands);
+
+        if (!$aiDecision) {
+            return;
+        }
+        switch ($aiDecision[0]) {
+            case "play":
+                GameController::play($aiDecision[1], $aiDecision[2]);
+                break;
+            case "move":
+                GameController::move($aiDecision[1], $aiDecision[2]);
+                break;
+            case "pass":
+                GameController::pass();
+                break;
+            default:
+                break;
+        }
+    }
+
     public static function undo(): void
     {
         $db = DatabaseController::getInstance();

@@ -47,7 +47,7 @@ class Spider extends Piece
         return $possibleMoves;
     }
 
-    private function isValid($currentTile, $board, &$visited): bool
+    private function isValid($currentTile, $board, $visited): bool
     {
         return !isset($visited[$currentTile])
             && !isset($board[$currentTile])

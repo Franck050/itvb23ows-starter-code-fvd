@@ -3,7 +3,6 @@
 namespace pieces;
 
 use controllers\GameController;
-use gameComponents\Player;
 use helpers\MoveHelper;
 
 class Beetle extends Piece

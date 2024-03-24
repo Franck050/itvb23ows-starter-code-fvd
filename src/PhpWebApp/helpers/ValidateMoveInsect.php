@@ -3,7 +3,6 @@
 namespace helpers;
 
 use controllers\GameController;
-use DeepCopy\f001\A;
 use pieces\Ant;
 use pieces\Beetle;
 use pieces\Grasshopper;

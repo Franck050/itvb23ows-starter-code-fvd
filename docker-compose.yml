@@ -15,3 +15,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: hive
+  ai:
+    build: src/Ai
+    ports:
+      - "5000:5000"

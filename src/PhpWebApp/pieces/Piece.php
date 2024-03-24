@@ -2,8 +2,6 @@
 
 namespace pieces;
 
-use controllers\GameController;
-use gameComponents\Board;
 use gameComponents\Player;
 
 abstract class Piece

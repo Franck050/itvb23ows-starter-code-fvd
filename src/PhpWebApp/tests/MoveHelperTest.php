@@ -3,7 +3,6 @@
 namespace tests;
 
 use controllers\GameController;
-use gameComponents\Board;
 use gameComponents\Hand;
 use helpers\MoveHelper;
 use PHPUnit\Framework\TestCase;

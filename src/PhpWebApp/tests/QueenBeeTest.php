@@ -5,7 +5,6 @@ namespace tests;
 use controllers\GameController;
 use gameComponents\Board;
 use PHPUnit\Framework\TestCase;
-use pieces\QueenBee;
 
 class QueenBeeTest extends TestCase
 {

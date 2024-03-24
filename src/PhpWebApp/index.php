@@ -155,6 +155,9 @@ $to = MoveHelper::getPositions();
             <input type="submit" name="action" value="Pass">
         </form>
         <form method="post" action="router.php">
+            <input type="submit" name="action" value="AiMove">
+        </form>
+        <form method="post" action="router.php">
             <input type="submit" name="action" value="Restart">
         </form>
         <strong>
