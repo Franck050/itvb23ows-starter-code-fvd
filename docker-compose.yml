@@ -1,21 +1,54 @@
-version: '3.0'
+# version: '3.0'
 
+# services:
+#   web:
+#     build: ./src/PhpWebApp
+#     ports:
+#       - "80:80"
+#     depends_on:
+#       - db
+#       - ai
+#   db:
+#     build: ./src/Database
+#     ports:
+#       - "3306:3306"
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: hive
+#   ai:
+#     build: ./src/Ai
+#     ports:
+#       - "5000:5000"
+
+version: '3.0'
 services:
-  web:
-    build: src/PhpWebApp
-    ports:
-      - "80:80"
+  app:
+    build: ./src/PhpWebApp
     depends_on:
       - db
-
+    container_name: app
+    environment:
+      MYSQL_HOSTNAME: ${MYSQL_HOSTNAME}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: php -S 0.0.0.0:80
+    ports:
+      - "80:80"
   db:
-    build: src/Database
+    build: ./src/Database
+    container_name: hive
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: hive
+    expose:
+      - "3306"
   ai:
-    build: src/Ai
+    build: ./src/Ai
+    container_name: ai
+    command: flask --app app run -h 0.0.0.0 --debug
     ports:
       - "5000:5000"

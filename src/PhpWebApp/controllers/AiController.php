@@ -4,7 +4,7 @@ namespace controllers;
 
 class AiController
 {
-    private static string $url = 'http://localhost:5000/';
+    private static string $url = 'http://ai:5000/';
 
     public static function postToGetAiMove($board, $currentMove, $playersHand)
     {

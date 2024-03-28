@@ -62,5 +62,4 @@ class QueenBeeTest extends TestCase
         $this->assertArrayNotHasKey('1,-2', Board::getBoard());
         $this->assertEquals('Q', Board::getBoard()['0,0'][0][1]);
     }
-
 }

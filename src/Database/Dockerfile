@@ -1,2 +1,3 @@
 FROM mysql:8.0
-COPY . /docker-entrypoint-initdb.d
+
+COPY hive.sql /docker-entrypoint-initdb.d/hive.sql

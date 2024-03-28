@@ -65,6 +65,4 @@ class SpiderTest extends TestCase
         $this->assertArrayNotHasKey('-2,3', Board::getBoard());
         $this->assertArrayHasKey('0,-1', Board::getBoard());
     }
-
-
 }
