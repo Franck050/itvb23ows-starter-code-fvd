@@ -21,7 +21,7 @@ pipeline {
             steps {
                 dir("src/PhpWebApp") {
                     sh 'composer update'
-                    sh './vendor/bin/phpunit .\tests\'
+                    sh ' ./vendor/bin/phpunit tests'
                 }
             }
         }
