@@ -4,10 +4,6 @@ namespace gameComponents;
 
 class Player
 {
-    public function __construct()
-    {
-    }
-
     public static function getPlayer()
     {
         if (!isset($_SESSION['player'])) {

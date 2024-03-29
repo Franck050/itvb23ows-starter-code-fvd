@@ -4,10 +4,6 @@ namespace gameComponents;
 
 class Board
 {
-    public function __construct()
-    {
-    }
-
     public static function getBoard(): array
     {
         if (!isset($_SESSION['board'])) {

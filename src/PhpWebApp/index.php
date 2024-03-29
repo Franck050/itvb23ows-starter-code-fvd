@@ -2,7 +2,7 @@
 
 session_start();
 
-require './vendor/autoload.php';
+require_once './vendor/autoload.php';
 
 use controllers\GameController;
 use controllers\DatabaseController;

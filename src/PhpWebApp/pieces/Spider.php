@@ -14,36 +14,39 @@ class Spider extends Piece
         }
 
         $visitedPositions = [$currentLocation => true];
-        $depth = 0;
         $tiles = [[$currentLocation, 0]];
         $possibleMoves = [];
 
         unset($board[$currentLocation]);
 
         while (!empty($tiles)) {
-            list($currentTile, $tileDepth) = array_shift($tiles);
+            [$currentTile, $tileDepth] = array_shift($tiles);
+            $possibleMoves = $this->processCurrentTile($currentTile, $tileDepth, $tiles, $possibleMoves, $visitedPositions, $board);
+        }
 
-            if ($tileDepth > $depth) {
-                if ($tileDepth == 3) {
-                    break;
+        return $possibleMoves;
+    }
+
+    private function processCurrentTile($currentTile, $tileDepth, &$tiles, $possibleMoves, &$visitedPositions, $board): array
+    {
+        if ($tileDepth == 3) {
+            return $possibleMoves;
+        }
+
+        $currentCoordinates = explode(',', $currentTile);
+        foreach (GameController::$offsets as $offset) {
+            $newCoordinates = $this->calculateNextSpot($currentCoordinates, $offset);
+            $newPosition = $this->convertToBoardCoordinates($newCoordinates[0], $newCoordinates[1]);
+
+            if ($this->isValid($newPosition, $board, $visitedPositions)) {
+                if ($tileDepth == 2) {
+                    $possibleMoves[] = $newPosition;
                 }
-                $depth = $tileDepth;
-            }
-
-            $currentCoordinates = explode(',', $currentTile);
-            foreach (GameController::$offsets as $offset) {
-                $newCoordinates = $this->calculateNextSpot($currentCoordinates, $offset);
-                $newPosition = $this->convertToBoardCoordinates($newCoordinates[0], $newCoordinates[1]);
-
-                if ($this->isValid($newPosition, $board, $visitedPositions)) {
-                    if ($tileDepth == 2) {
-                        $possibleMoves[] = $newPosition;
-                    }
-                    $tiles[] = [$newPosition, $tileDepth + 1];
-                    $visitedPositions[$newPosition] = true;
-                }
+                $tiles[] = [$newPosition, $tileDepth + 1];
+                $visitedPositions[$newPosition] = true;
             }
         }
+
         return $possibleMoves;
     }
 

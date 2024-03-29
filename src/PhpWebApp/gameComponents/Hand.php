@@ -4,9 +4,6 @@ namespace gameComponents;
 
 class Hand
 {
-    public function __construct()
-    {
-    }
 
     public static function getHand(int $player = null)
     {

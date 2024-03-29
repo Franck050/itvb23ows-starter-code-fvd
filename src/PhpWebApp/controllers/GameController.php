@@ -11,9 +11,6 @@ use helpers\MoveHelper;
 class GameController
 {
     public static array $offsets = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
-    function __construct()
-    {
-    }
 
     public static function isGameStarted(): bool
     {
@@ -194,10 +191,8 @@ class GameController
         $opponent = abs($player - 1);
         foreach (Board::getBoard() as $pos => $tiles) {
             $topTile = end($tiles);
-            if ($topTile[0] == $opponent && $topTile[1] == 'Q') {
-                if (count(MoveHelper::getNeighbours($pos)) == 6) {
-                    return true;
-                }
+            if ($topTile[0] == $opponent && $topTile[1] == 'Q' && count(MoveHelper::getNeighbours($pos)) == 6) {
+                return true;
             }
         }
         return false;

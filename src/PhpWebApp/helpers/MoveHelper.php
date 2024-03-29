@@ -8,10 +8,6 @@ use gameComponents\Player;
 
 class MoveHelper
 {
-    public function __construct()
-    {
-    }
-
     public static function getPositions(): array
     {
         $board = Board::getBoard();
@@ -24,7 +20,7 @@ class MoveHelper
             }
         }
         $to = array_unique($to);
-        if (!count($to) and !count($board)) {
+        if (!count($to) && !count($board)) {
             $to[] = '0,0';
         }
         return $to;
@@ -45,15 +41,16 @@ class MoveHelper
         $board = Board::getBoard();
         $player = Player::getPlayer();
         $hand = Hand::getHand($player);
+        $isValid = true;
 
         if (isset($board[$pos])) {
-            return false;
-        } else if(count($board) && !self::hasNeighBour($pos, $board)){
-            return false;
-        } else if(array_sum($hand) < 11 && !self::neighboursAreSameColor($player, $pos, $board) ) {
-            return false;
+            $isValid = false;
+        } elseif(count($board) && !self::hasNeighBour($pos, $board)){
+            $isValid = false;
+        } elseif(array_sum($hand) < 11 && !self::neighboursAreSameColor($player, $pos, $board) ) {
+            $isValid = false;
         }
-        return true;
+        return $isValid;
     }
 
     public static function validateMove($from, $to): bool
@@ -64,16 +61,20 @@ class MoveHelper
 
         if ($from == $to) {
             GameController::setError("Tile must move");
+            $isValid = false;
         } elseif (!isset($board[$from])) {
             GameController::setError("Board position is empty");
+            $isValid = false;
         } elseif (
             isset($board[$from][count($board[$from]) - 1]) &&
             $board[$from][count($board[$from]) - 1][0] != $player
-        )
+        ) {
             GameController::setError("Tile is not owned by player");
-        elseif ($hand['Q'])
+            $isValid = false;
+        } elseif ($hand['Q']) {
             GameController::setError("Queen bee is not played");
-        else {
+            $isValid = false;
+        } else {
             $tile = array_pop($board[$from]);
             if (count($board[$from]) == 0) {
                 unset($board[$from]);
@@ -81,23 +82,26 @@ class MoveHelper
 
             if (isset($board[$to]) && !$tile[1] == ['B']) {
                 GameController::setError("Tile is already taken");
+                $isValid = false;
             } elseif (!self::hasNeighBour($to, $board) || self::checkForHiveSplit($board)) {
                 GameController::setError("Move would split hive");
+                $isValid = false;
             } elseif (self::slide($from, $to, $board)) {
                 GameController::setError("Slide is not allowed");
-            } elseif ($tile[1] == 'A') {
-                return ValidateMoveInsect::validateAntMove($board, $from, $to);
-            } elseif ($tile[1] == 'B') {
-                return ValidateMoveInsect::validateBeetleMove($board, $from, $to);
-            } elseif ($tile[1] == 'G') {
-                return ValidateMoveInsect::validateGrasshopperMove($board, $from, $to);
-            } elseif ($tile[1] == 'Q') {
-                return ValidateMoveInsect::validateQueenBeeMove($board, $from, $to);
-            } elseif ($tile[1] == 'S') {
-                return ValidateMoveInsect::validateSpiderMove($board, $from, $to);
+                $isValid = false;
+            } else {
+                $isValid = match ($tile[1]) {
+                    'A' => ValidateMoveInsect::validateAntMove($board, $from, $to),
+                    'B' => ValidateMoveInsect::validateBeetleMove($board, $from, $to),
+                    'G' => ValidateMoveInsect::validateGrasshopperMove($board, $from, $to),
+                    'Q' => ValidateMoveInsect::validateQueenBeeMove($board, $from, $to),
+                    'S' => ValidateMoveInsect::validateSpiderMove($board, $from, $to),
+                    default => false,
+                };
             }
         }
-        return false;
+
+        return $isValid;
     }
 
     public static function slide($from, $to, $board): bool
@@ -228,9 +232,13 @@ class MoveHelper
     public static function neighboursAreSameColor($player, $a, $board): bool
     {
         foreach ($board as $b => $st) {
-            if (!$st) continue;
+            if (!$st) {
+                continue;
+            }
             $c = $st[count($st) - 1][0];
-            if ($c != $player && self::isNeighbour($a, $b)) return false;
+            if ($c != $player && self::isNeighbour($a, $b)) {
+                return false;
+            }
         }
         return true;
     }

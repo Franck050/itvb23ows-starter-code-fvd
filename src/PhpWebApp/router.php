@@ -9,7 +9,8 @@ session_start();
 $actionMappings = [
     'Restart' => function() { GameController::restart(); },
     'Pass' => function() { GameController::pass(); },
-    'Play' => function() { if (isset($_POST['piece'], $_POST['to'])) GameController::play($_POST['piece'], $_POST['to']); },
+    'Play' => function() { if (isset($_POST['piece'], $_POST['to']))
+    { GameController::play($_POST['piece'], $_POST['to']); } },
     'Undo' => function() { GameController::undo(); },
     'Move' => function() { GameController::move($_POST['from'], $_POST['to']);},
     'AiMove' => function () { GameController::executeAiMove(); }

@@ -14,6 +14,7 @@ class DatabaseController
 
     public function __construct()
     {
+        // Use 'DB_HOSTNAME = localhost' for unittests
         $this->connection = new \mysqli(
             $_ENV['DB_HOSTNAME'],
             $_ENV['DB_USERNAME'],
@@ -39,12 +40,12 @@ class DatabaseController
         return $this->connection->prepare($query);
     }
 
-    function getConnection(): \mysqli
+    private function getConnection(): \mysqli
     {
         return $this->connection;
     }
 
-    function getState(): string
+    private function getState(): string
     {
         return serialize([$_SESSION['hand'], $_SESSION['board'], $_SESSION['player']]);
     }

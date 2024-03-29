@@ -6,7 +6,7 @@ use gameComponents\Player;
 
 abstract class Piece
 {
-    public abstract function findAvailableMoves(array $board, string $currentLocation): array;
+    abstract public function findAvailableMoves(array $board, string $currentLocation): array;
 
     public function beetleBlockCheck($board, $from): bool
     {
