@@ -13,7 +13,7 @@ pipeline {
                 steps {
                     script {
                         sh 'echo "Building..."'
-                        sh 'docker compose up --build'
+                        sh 'docker-compose up --build'
                     }
                 }
         }
