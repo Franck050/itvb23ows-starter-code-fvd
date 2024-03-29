@@ -21,7 +21,7 @@ pipeline {
             steps {
                 dir("src/PhpWebApp") {
                     sh 'echo "Testing..."'
-                    sh ' ./vendor/bin/phpunit tests'
+                    sh ' php vendor/bin/phpunit tests'
                 }
             }
         }
