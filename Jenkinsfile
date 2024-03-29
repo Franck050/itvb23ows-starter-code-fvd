@@ -20,6 +20,7 @@ pipeline {
         stage('PHP Unit Test') {
             steps {
                 dir("src/PhpWebApp") {
+                    sh 'echo "Testing..."'
                     sh 'composer update'
                     sh ' ./vendor/bin/phpunit tests'
                 }
