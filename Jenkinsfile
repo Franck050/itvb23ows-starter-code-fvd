@@ -17,6 +17,14 @@ pipeline {
                 }
             }
         }
+        stage('PHP Unit Test') {
+            steps {
+                dir("src/PhpWebApp") {
+                    sh 'echo "Testing..."'
+                    sh ' php vendor/bin/phpunit tests'
+                }
+            }
+        }
     }
     post {
         always {
