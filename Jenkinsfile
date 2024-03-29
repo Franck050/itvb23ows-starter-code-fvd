@@ -17,6 +17,14 @@ pipeline {
                 }
             }
         }
+        stage('PHP Unit Test') {
+            steps {
+                dir("src/PhpWebApp") {
+                    sh 'composer update'
+                    sh './vendor/bin/phpunit .\tests\'
+                }
+            }
+        }
     }
     post {
         always {
