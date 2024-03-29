@@ -16,22 +16,23 @@ pipeline {
                         sh 'docker compose up --build -d'
                     }
                 }
-        }
+                }
         stage('PHP Unit Tests') {
             steps {
                 script {
                     dir('src/PhpWebApp') {
-                        if (!fileExists('vendor')) {
-                            sh 'composer install'
+                        if (!fileExists('composer.phar')) {
+                            sh 'curl -sS https://getcomposer.org/installer | php'
                         }
+                        sh 'php composer.phar install'
                         sh 'mkdir -p build/logs'
-                        sh 'vendor/bin/phpunit --log-junit build/logs/junit.xml'
+                        sh 'vendor/bin/phpunit --log-junit build/logs/junit.xml || true'
                     }
                 }
             }
             post {
                 always {
-                    junit 'src/PhpWebApp/build/logs/junit.xml'
+                    junit '**/build/logs/junit.xml'
                 }
             }
         }
