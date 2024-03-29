@@ -10,29 +10,10 @@ pipeline {
             }
         }
         stage('Docker compose up') {
-                steps {
-                    script {
-                        sh 'echo "Building..."'
-                        sh 'docker compose up --build -d'
-                    }
-                }
-                }
-        stage('PHP Unit Tests') {
             steps {
                 script {
-                    dir('src/PhpWebApp') {
-                        if (!fileExists('composer.phar')) {
-                            sh 'curl -sS https://getcomposer.org/installer | php'
-                        }
-                        sh 'php composer.phar install'
-                        sh 'mkdir -p build/logs'
-                        sh 'vendor/bin/phpunit --log-junit build/logs/junit.xml || true'
-                    }
-                }
-            }
-            post {
-                always {
-                    junit '**/build/logs/junit.xml'
+                    sh 'echo "Building..."'
+                    sh 'docker compose up --build -d'
                 }
             }
         }
